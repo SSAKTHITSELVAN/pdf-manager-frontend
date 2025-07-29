@@ -14,105 +14,63 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #000;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
+            overflow-x: hidden;
         }
         
         .container {
             position: relative;
             width: 100%;
-            height: 100vh;
+            min-height: 100vh;
         }
         
-        /* PDF Canvas Container */
+        /* PDF Viewer - Mobile Optimized */
         .pdf-container {
             width: 100%;
-            height: 100%;
-            overflow: auto;
-            background: #f5f5f5;
-            display: none;
+            min-height: 100vh;
+            background: #fff;
             position: relative;
         }
         
-        .pdf-page {
-            display: block;
-            margin: 0 auto;
-            max-width: 100%;
-            height: auto;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        /* Navigation Controls */
-        .pdf-controls {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            border-radius: 25px;
-            padding: 10px 20px;
-            display: none;
-            align-items: center;
-            gap: 15px;
-            z-index: 100;
-        }
-        
-        .control-btn {
-            background: none;
+        .pdf-viewer {
+            width: 100%;
+            min-height: 100vh;
             border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: block;
         }
         
-        .control-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .page-info {
-            color: white;
-            font-size: 14px;
-            min-width: 60px;
-            text-align: center;
-        }
-        
-        /* Upload Button */
+        /* Upload Button - Mobile Friendly */
         .upload-btn {
             position: fixed;
-            top: 20px;
+            bottom: 20px;
             right: 20px;
-            width: 45px;
-            height: 45px;
-            background: #007AFF;
+            width: 56px;
+            height: 56px;
+            background: #FF6B35;
             border: none;
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 2px 15px rgba(0, 122, 255, 0.4);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 24px;
             color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-btn:active {
+            transform: scale(0.9);
         }
         
         /* Loading Screen */
         .loading {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: #f5f5f5;
+            height: 100vh;
+            background: #f8f9fa;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -123,8 +81,8 @@
         .spinner {
             width: 40px;
             height: 40px;
-            border: 4px solid #e0e0e0;
-            border-top: 4px solid #007AFF;
+            border: 4px solid #e9ecef;
+            border-top: 4px solid #FF6B35;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 20px;
@@ -136,30 +94,30 @@
         }
         
         .loading-text {
-            color: #666;
+            color: #6c757d;
             font-size: 16px;
             text-align: center;
         }
         
         /* No PDF Screen */
         .no-pdf {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: #f5f5f5;
-            display: none;
+            height: 100vh;
+            background: #f8f9fa;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #666;
+            color: #6c757d;
             text-align: center;
             padding: 20px;
         }
         
         .no-pdf-icon {
-            font-size: 60px;
+            font-size: 80px;
             margin-bottom: 20px;
             opacity: 0.5;
         }
@@ -167,24 +125,25 @@
         .no-pdf h2 {
             margin-bottom: 10px;
             font-weight: 600;
-            font-size: 20px;
+            color: #495057;
         }
         
         .no-pdf p {
-            font-size: 14px;
+            font-size: 16px;
             opacity: 0.8;
         }
         
-        /* Modal Styles */
+        /* Modal - Mobile Optimized */
         .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
             z-index: 2000;
+            overflow-y: auto;
         }
         
         .modal-content {
@@ -193,18 +152,19 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: white;
-            padding: 25px;
-            border-radius: 15px;
+            padding: 30px 20px;
+            border-radius: 20px;
             width: 90%;
             max-width: 350px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
         
         .modal h3 {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: center;
             color: #333;
             font-weight: 600;
+            font-size: 20px;
         }
         
         .form-group {
@@ -214,69 +174,105 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: #666;
-            font-size: 14px;
+            color: #495057;
+            font-size: 16px;
+            font-weight: 500;
         }
         
         .form-group input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
             font-size: 16px;
+            transition: border-color 0.3s ease;
+            -webkit-appearance: none;
         }
         
         .form-group input:focus {
             outline: none;
-            border-color: #007AFF;
+            border-color: #FF6B35;
         }
         
         .form-group input[type="file"] {
-            padding: 8px;
-            font-size: 14px;
+            padding: 12px;
+            font-size: 16px;
         }
         
         .modal-actions {
             display: flex;
-            gap: 10px;
-            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 25px;
         }
         
         .btn {
-            padding: 10px 20px;
+            flex: 1;
+            padding: 15px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
         
         .btn-cancel {
-            background: #f0f0f0;
-            color: #666;
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+        
+        .btn-cancel:active {
+            background: #e9ecef;
         }
         
         .btn-upload {
-            background: #007AFF;
+            background: #FF6B35;
             color: white;
         }
         
+        .btn-upload:active {
+            background: #e55a2b;
+        }
+        
         .btn-upload:disabled {
-            background: #ccc;
+            background: #adb5bd;
             cursor: not-allowed;
         }
         
         .error-message {
-            color: #FF3B30;
+            color: #dc3545;
             font-size: 14px;
-            margin-top: 8px;
+            margin-top: 10px;
             text-align: center;
+            padding: 10px;
+            background: #f8d7da;
+            border-radius: 8px;
         }
         
         .success-message {
-            color: #34C759;
+            color: #155724;
             font-size: 14px;
-            margin-top: 8px;
+            margin-top: 10px;
             text-align: center;
+            padding: 10px;
+            background: #d4edda;
+            border-radius: 8px;
+        }
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 95%;
+                padding: 25px 15px;
+            }
+            
+            .upload-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                bottom: 15px;
+                right: 15px;
+            }
         }
     </style>
 </head>
@@ -289,22 +285,15 @@
         </div>
         
         <!-- No PDF Screen -->
-        <div class="no-pdf" id="noPdfScreen">
-            <div class="no-pdf-icon">🍽️</div>
-            <h2>Menu Not Available</h2>
-            <p>Please wait while we prepare your digital menu</p>
+        <div class="no-pdf" id="noPdfScreen" style="display: none;">
+            <div class="no-pdf-icon">📋</div>
+            <h2>No Menu Available</h2>
+            <p>Menu will appear here once uploaded</p>
         </div>
         
         <!-- PDF Container -->
-        <div class="pdf-container" id="pdfContainer">
-            <canvas class="pdf-page" id="pdfCanvas"></canvas>
-        </div>
-        
-        <!-- PDF Navigation Controls -->
-        <div class="pdf-controls" id="pdfControls">
-            <button class="control-btn" id="prevBtn" onclick="previousPage()">‹</button>
-            <span class="page-info" id="pageInfo">1 / 1</span>
-            <button class="control-btn" id="nextBtn" onclick="nextPage()">›</button>
+        <div class="pdf-container" id="pdfContainer" style="display: none;">
+            <iframe class="pdf-viewer" id="pdfViewer" scrolling="yes"></iframe>
         </div>
         
         <!-- Upload Button -->
@@ -316,11 +305,11 @@
     <!-- Upload Modal -->
     <div class="modal" id="uploadModal">
         <div class="modal-content">
-            <h3>Upload Menu</h3>
+            <h3>🔐 Upload Menu</h3>
             <form id="uploadForm">
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" id="password" placeholder="Enter password" required>
+                    <input type="password" id="password" placeholder="Enter password" required autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label for="pdfFile">Select Menu PDF:</label>
@@ -335,147 +324,75 @@
         </div>
     </div>
 
-    <!-- PDF.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    
     <script>
         const API_BASE_URL = 'https://sakthibillionaire-pdf-upload-api.hf.space';
         const UPLOAD_PASSWORD = '1234';
+        let currentPDF = null;
         
-        let pdfDoc = null;
-        let pageNum = 1;
-        let pageRendering = false;
-        let pageNumPending = null;
-        let scale = 1.5;
-        let canvas = document.getElementById('pdfCanvas');
-        let ctx = canvas.getContext('2d');
-        
-        // Set PDF.js worker
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        
-        // Render a page
-        function renderPage(num) {
-            pageRendering = true;
-            
-            pdfDoc.getPage(num).then(function(page) {
-                // Calculate scale to fit mobile screen
-                const viewport = page.getViewport({scale: 1});
-                const mobileScale = Math.min(
-                    (window.innerWidth - 20) / viewport.width,
-                    (window.innerHeight - 100) / viewport.height
-                );
-                
-                const scaledViewport = page.getViewport({scale: mobileScale});
-                canvas.height = scaledViewport.height;
-                canvas.width = scaledViewport.width;
-                
-                const renderContext = {
-                    canvasContext: ctx,
-                    viewport: scaledViewport
-                };
-                
-                const renderTask = page.render(renderContext);
-                
-                renderTask.promise.then(function() {
-                    pageRendering = false;
-                    if (pageNumPending !== null) {
-                        renderPage(pageNumPending);
-                        pageNumPending = null;
-                    }
-                });
-            });
-            
-            // Update page info
-            document.getElementById('pageInfo').textContent = num + ' / ' + pdfDoc.numPages;
-            
-            // Update navigation buttons
-            document.getElementById('prevBtn').disabled = (num <= 1);
-            document.getElementById('nextBtn').disabled = (num >= pdfDoc.numPages);
-        }
-        
-        // Queue rendering
-        function queueRenderPage(num) {
-            if (pageRendering) {
-                pageNumPending = num;
-            } else {
-                renderPage(num);
-            }
-        }
-        
-        // Previous page
-        function previousPage() {
-            if (pageNum <= 1) return;
-            pageNum--;
-            queueRenderPage(pageNum);
-        }
-        
-        // Next page
-        function nextPage() {
-            if (pageNum >= pdfDoc.numPages) return;
-            pageNum++;
-            queueRenderPage(pageNum);
-        }
-        
-        // Load PDF from URL
-        async function loadPDF(pdfUrl) {
-            try {
-                const loadingTask = pdfjsLib.getDocument(pdfUrl);
-                pdfDoc = await loadingTask.promise;
-                
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('pdfContainer').style.display = 'block';
-                
-                // Show navigation controls if more than 1 page
-                if (pdfDoc.numPages > 1) {
-                    document.getElementById('pdfControls').style.display = 'flex';
-                }
-                
-                // Render first page
-                renderPage(pageNum);
-                
-            } catch (error) {
-                console.error('Error loading PDF:', error);
-                showNoPdf();
-            }
-        }
-        
-        // Show no PDF screen
-        function showNoPdf() {
-            document.getElementById('loadingScreen').style.display = 'none';
-            document.getElementById('noPdfScreen').style.display = 'flex';
-            document.getElementById('pdfContainer').style.display = 'none';
-            document.getElementById('pdfControls').style.display = 'none';
-        }
-        
-        // Load the latest PDF
+        // Mobile-optimized PDF loading
         async function loadLatestPDF() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const noPdfScreen = document.getElementById('noPdfScreen');
+            const pdfContainer = document.getElementById('pdfContainer');
+            const pdfViewer = document.getElementById('pdfViewer');
+            
             try {
                 const response = await fetch(`${API_BASE_URL}/list`);
                 const result = await response.json();
                 
+                loadingScreen.style.display = 'none';
+                
                 if (response.ok && result.pdfs.length > 0) {
                     const latestPDF = result.pdfs[result.pdfs.length - 1];
+                    currentPDF = latestPDF.filename;
+                    
+                    // Try multiple methods for mobile PDF viewing
                     const pdfUrl = `${API_BASE_URL}/pdf/${encodeURIComponent(latestPDF.filename)}`;
-                    await loadPDF(pdfUrl);
+                    
+                    // Method 1: Try Mozilla PDF.js viewer (works well on mobile)
+                    const pdfJsUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
+                    
+                    // Method 2: Fallback to Google Docs viewer
+                    const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
+                    
+                    // Try PDF.js first (better for mobile)
+                    pdfViewer.src = pdfJsUrl;
+                    pdfContainer.style.display = 'block';
+                    noPdfScreen.style.display = 'none';
+                    
+                    // Fallback to Google viewer if PDF.js fails
+                    pdfViewer.onerror = function() {
+                        console.log('PDF.js failed, trying Google Viewer...');
+                        pdfViewer.src = googleViewerUrl;
+                    };
+                    
                 } else {
-                    showNoPdf();
+                    noPdfScreen.style.display = 'flex';
+                    pdfContainer.style.display = 'none';
                 }
             } catch (error) {
-                console.error('Error loading PDF list:', error);
-                showNoPdf();
+                console.error('Error loading PDF:', error);
+                loadingScreen.style.display = 'none';
+                noPdfScreen.style.display = 'flex';
+                pdfContainer.style.display = 'none';
             }
         }
         
-        // Upload modal functions
+        // Open upload modal
         function openUploadModal() {
             document.getElementById('uploadModal').style.display = 'block';
             document.getElementById('password').focus();
+            // Prevent body scroll when modal is open
+            document.body.style.overflow = 'hidden';
         }
         
+        // Close upload modal
         function closeUploadModal() {
             document.getElementById('uploadModal').style.display = 'none';
             document.getElementById('uploadForm').reset();
             document.getElementById('uploadMessage').innerHTML = '';
+            // Restore body scroll
+            document.body.style.overflow = 'auto';
         }
         
         // Handle form submission
@@ -489,11 +406,14 @@
             
             messageDiv.innerHTML = '';
             
+            // Check password
             if (password !== UPLOAD_PASSWORD) {
                 messageDiv.innerHTML = '<div class="error-message">❌ Wrong password!</div>';
+                document.getElementById('password').focus();
                 return;
             }
             
+            // Check file
             if (!fileInput.files[0]) {
                 messageDiv.innerHTML = '<div class="error-message">Please select a PDF file</div>';
                 return;
@@ -511,9 +431,10 @@
                 return;
             }
             
+            // Upload process
             uploadButton.disabled = true;
             uploadButton.textContent = 'Uploading...';
-            messageDiv.innerHTML = '<div class="loading-text">📤 Uploading Menu...</div>';
+            messageDiv.innerHTML = '<div style="text-align: center; padding: 10px; color: #FF6B35;">📤 Uploading menu...</div>';
             
             try {
                 const formData = new FormData();
@@ -529,15 +450,21 @@
                 if (response.ok) {
                     messageDiv.innerHTML = '<div class="success-message">✅ Menu uploaded successfully!</div>';
                     
-                    // Load the new PDF
-                    setTimeout(async () => {
+                    // Update viewer
+                    const pdfContainer = document.getElementById('pdfContainer');
+                    const noPdfScreen = document.getElementById('noPdfScreen');
+                    const pdfViewer = document.getElementById('pdfViewer');
+                    
+                    currentPDF = result.filename;
+                    const pdfUrl = `${API_BASE_URL}/pdf/${encodeURIComponent(result.filename)}`;
+                    const pdfJsUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
+                    
+                    pdfViewer.src = pdfJsUrl;
+                    pdfContainer.style.display = 'block';
+                    noPdfScreen.style.display = 'none';
+                    
+                    setTimeout(() => {
                         closeUploadModal();
-                        document.getElementById('loadingScreen').style.display = 'flex';
-                        document.getElementById('pdfContainer').style.display = 'none';
-                        document.getElementById('pdfControls').style.display = 'none';
-                        
-                        const pdfUrl = `${API_BASE_URL}/pdf/${encodeURIComponent(result.filename)}`;
-                        await loadPDF(pdfUrl);
                     }, 1500);
                     
                 } else {
@@ -558,18 +485,35 @@
             }
         });
         
-        // Handle orientation change
-        window.addEventListener('orientationchange', function() {
-            setTimeout(() => {
-                if (pdfDoc && pageNum) {
-                    renderPage(pageNum);
-                }
-            }, 100);
+        // Handle escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('uploadModal').style.display === 'block') {
+                closeUploadModal();
+            }
+        });
+        
+        // Prevent zoom on input focus (iOS)
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                document.querySelector('meta[name=viewport]').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+            });
+            input.addEventListener('blur', function() {
+                document.querySelector('meta[name=viewport]').setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes');
+            });
         });
         
         // Load PDF when page loads
         document.addEventListener('DOMContentLoaded', function() {
             loadLatestPDF();
+        });
+        
+        // Handle orientation change
+        window.addEventListener('orientationchange', function() {
+            setTimeout(function() {
+                if (currentPDF) {
+                    loadLatestPDF();
+                }
+            }, 500);
         });
     </script>
 </body>

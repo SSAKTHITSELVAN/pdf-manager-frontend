@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+        
+        /* PDF Viewer */
+        .pdf-viewer {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #f5f5f5;
+        }
+        
+        /* Upload Button */
+        .upload-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #007AFF;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 122, 255, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .upload-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(0, 122, 255, 0.4);
+        }
+        
+        .upload-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Loading Screen */
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e0e0e0;
+            border-top: 4px solid #007AFF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        /* No PDF Screen */
+        .no-pdf {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .no-pdf-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .no-pdf h2 {
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .no-pdf p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal h3 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #007AFF;
+        }
+        
+        .form-group input[type="file"] {
+            padding: 8px;
+            font-size: 14px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-cancel {
+            background: #f0f0f0;
+            color: #666;
+        }
+        
+        .btn-cancel:hover {
+            background: #e0e0e0;
+        }
+        
+        .btn-upload {
+            background: #007AFF;
+            color: white;
+        }
+        
+        .btn-upload:hover {
+            background: #0056CC;
+        }
+        
+        .btn-upload:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .error-message {
+            color: #FF3B30;
+            font-size: 14px;
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        .success-message {
+            color: #34C759;
+            font-size: 14px;
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .upload-btn {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 20px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+            
+            .no-pdf-icon {
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading Screen -->
+        <div class="loading" id="loadingScreen">
+            <div class="spinner"></div>
+            <div class="loading-text">Loading PDF...</div>
+        </div>
+        
+        <!-- No PDF Screen -->
+        <div class="no-pdf" id="noPdfScreen" style="display: none;">
+            <div class="no-pdf-icon">📄</div>
+            <h2>No PDF Available</h2>
+            <p>Upload a PDF to view it here</p>
+        </div>
+        
+        <!-- PDF Viewer -->
+        <iframe class="pdf-viewer" id="pdfViewer" style="display: none;"></iframe>
+        
+        <!-- Upload Button -->
+        <button class="upload-btn" onclick="openUploadModal()" title="Upload PDF">
+            📤
+        </button>
+    </div>
+    
+    <!-- Upload Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <h3>Upload PDF</h3>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                <div class="form-group">
+                    <label for="pdfFile">Select PDF:</label>
+                    <input type="file" id="pdfFile" accept=".pdf" required>
+                </div>
+                <div id="uploadMessage"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeUploadModal()">Cancel</button>
+                    <button type="submit" class="btn btn-upload" id="uploadButton">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://sakthibillionaire-pdf-upload-api.hf.space';
+        const UPLOAD_PASSWORD = '1234';
+        let currentPDF = null;
+        
+        // Load the latest PDF on page load
+        async function loadLatestPDF() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const noPdfScreen = document.getElementById('noPdfScreen');
+            const pdfViewer = document.getElementById('pdfViewer');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/list`);
+                const result = await response.json();
+                
+                loadingScreen.style.display = 'none';
+                
+                if (response.ok && result.pdfs.length > 0) {
+                    // Get the latest PDF (assuming they're sorted)
+                    const latestPDF = result.pdfs[result.pdfs.length - 1];
+                    currentPDF = latestPDF.filename;
+                    
+                    // Load PDF in viewer
+                    pdfViewer.src = `${API_BASE_URL}/pdf/${encodeURIComponent(latestPDF.filename)}`;
+                    pdfViewer.style.display = 'block';
+                    noPdfScreen.style.display = 'none';
+                } else {
+                    // No PDFs available
+                    noPdfScreen.style.display = 'flex';
+                    pdfViewer.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+                loadingScreen.style.display = 'none';
+                noPdfScreen.style.display = 'flex';
+                pdfViewer.style.display = 'none';
+            }
+        }
+        
+        // Open upload modal
+        function openUploadModal() {
+            document.getElementById('uploadModal').style.display = 'block';
+            document.getElementById('password').focus();
+        }
+        
+        // Close upload modal
+        function closeUploadModal() {
+            document.getElementById('uploadModal').style.display = 'none';
+            document.getElementById('uploadForm').reset();
+            document.getElementById('uploadMessage').innerHTML = '';
+        }
+        
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const fileInput = document.getElementById('pdfFile');
+            const uploadButton = document.getElementById('uploadButton');
+            const messageDiv = document.getElementById('uploadMessage');
+            
+            // Clear previous messages
+            messageDiv.innerHTML = '';
+            
+            // Check password
+            if (password !== UPLOAD_PASSWORD) {
+                messageDiv.innerHTML = '<div class="error-message">❌ Wrong password!</div>';
+                document.getElementById('password').focus();
+                return;
+            }
+            
+            // Check if file is selected
+            if (!fileInput.files[0]) {
+                messageDiv.innerHTML = '<div class="error-message">Please select a PDF file</div>';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            
+            // Validate file type
+            if (file.type !== 'application/pdf') {
+                messageDiv.innerHTML = '<div class="error-message">Please select a PDF file only</div>';
+                return;
+            }
+            
+            // Validate file size (10MB limit)
+            if (file.size > 10 * 1024 * 1024) {
+                messageDiv.innerHTML = '<div class="error-message">File too large. Maximum 10MB allowed</div>';
+                return;
+            }
+            
+            // Show loading state
+            uploadButton.disabled = true;
+            uploadButton.textContent = 'Uploading...';
+            messageDiv.innerHTML = '<div class="loading-text">📤 Uploading PDF...</div>';
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const response = await fetch(`${API_BASE_URL}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.innerHTML = '<div class="success-message">✅ Upload successful!</div>';
+                    
+                    // Update PDF viewer with new file
+                    const pdfViewer = document.getElementById('pdfViewer');
+                    const noPdfScreen = document.getElementById('noPdfScreen');
+                    
+                    currentPDF = result.filename;
+                    pdfViewer.src = `${API_BASE_URL}/pdf/${encodeURIComponent(result.filename)}`;
+                    pdfViewer.style.display = 'block';
+                    noPdfScreen.style.display = 'none';
+                    
+                    // Close modal after a short delay
+                    setTimeout(() => {
+                        closeUploadModal();
+                    }, 1500);
+                    
+                } else {
+                    messageDiv.innerHTML = `<div class="error-message">❌ Upload failed: ${result.detail}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="error-message">❌ Upload failed: ${error.message}</div>`;
+            } finally {
+                uploadButton.disabled = false;
+                uploadButton.textContent = 'Upload';
+            }
+        });
+        
+        // Close modal when clicking outside
+        document.getElementById('uploadModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeUploadModal();
+            }
+        });
+        
+        // Handle escape key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('uploadModal').style.display === 'block') {
+                closeUploadModal();
+            }
+        });
+        
+        // Load PDF when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLatestPDF();
+        });
+        
+        // Handle iframe load events
+        document.getElementById('pdfViewer').addEventListener('load', function() {
+            console.log('PDF loaded successfully');
+        });
+        
+        document.getElementById('pdfViewer').addEventListener('error', function() {
+            console.error('Error loading PDF');
+            document.getElementById('noPdfScreen').style.display = 'flex';
+            this.style.display = 'none';
+        });
+    </script>
+</body>
+</html>

@@ -333,8 +333,9 @@
                     const latestPDF = result.pdfs[result.pdfs.length - 1];
                     currentPDF = latestPDF.filename;
                     
-                    // Load PDF in viewer
-                    pdfViewer.src = `${API_BASE_URL}/pdf/${encodeURIComponent(latestPDF.filename)}`;
+                    // Use Google PDF Viewer to display PDF inline
+                    const pdfUrl = `${API_BASE_URL}/pdf/${encodeURIComponent(latestPDF.filename)}`;
+                    pdfViewer.src = `https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
                     pdfViewer.style.display = 'block';
                     noPdfScreen.style.display = 'none';
                 } else {
@@ -426,7 +427,8 @@
                     const noPdfScreen = document.getElementById('noPdfScreen');
                     
                     currentPDF = result.filename;
-                    pdfViewer.src = `${API_BASE_URL}/pdf/${encodeURIComponent(result.filename)}`;
+                    const pdfUrl = `${API_BASE_URL}/pdf/${encodeURIComponent(result.filename)}`;
+                    pdfViewer.src = `https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
                     pdfViewer.style.display = 'block';
                     noPdfScreen.style.display = 'none';
                     
